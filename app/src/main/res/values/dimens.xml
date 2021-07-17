@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="splash_screen_title_size">35sp</dimen>
+    <dimen name="button_background_radius">15sp</dimen>
+    <dimen name="btn_textSize">18sp</dimen>
+    <dimen name="btn_padding">8dp</dimen>
+    <dimen name="auth_header_image_height">120dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+</resources>
