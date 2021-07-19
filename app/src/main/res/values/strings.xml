@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">iAssist</string>
-    <string name="visual_assistance">I Need Visual Assistance</string>
+    <string name="visual_assistance">I Neeed Visual Assistance</string>
     <string name="hearing_assistance">I Need Hearing Assistance</string>
     <string name="talking_assistance">I Need Speaking Assistance</string>
     <string name="title_activity_visual_assistance">VisualAssistanceActivity</string>
@@ -10,6 +10,4 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>
