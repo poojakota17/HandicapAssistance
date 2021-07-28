@@ -25,32 +25,12 @@
 
     </FrameLayout>
 
-    <com.cmpe295.iAssist.utils.CustomButton
-        android:id="@+id/btn_visual"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/button_background"
-        android:foreground="?attr/selectableItemBackground"
-        android:gravity="center"
-        android:paddingTop="@dimen/btn_padding"
-        android:paddingBottom="@dimen/btn_padding"
-        android:text="@string/visual_assistance"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/btn_textSize"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fl_header_image"
-         />
+
 
     <com.cmpe295.iAssist.utils.CustomButton
         android:id="@+id/btn_hearing"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="50dp"
         android:layout_gravity="center"
         android:layout_marginStart="16dp"
         android:layout_marginTop="50dp"
@@ -66,12 +46,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_visual" />
+        app:layout_constraintTop_toBottomOf="@id/fl_header_image" />
 
     <com.cmpe295.iAssist.utils.CustomButton
         android:id="@+id/btn_mute"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="50dp"
         android:layout_gravity="center"
         android:layout_marginStart="16dp"
         android:layout_marginTop="50dp"
