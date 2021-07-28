@@ -15,10 +15,10 @@ tools:context=".VisualAssistanceActivity">
     android:layout_weight="1"
     android:id="@+id/image_view"
     />
-<Button
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/bt_open"
-    android:text="Open Camera"
-    android:layout_marginTop="10dp"/>
+<!--<Button-->
+<!--    android:layout_width="wrap_content"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:id="@+id/bt_open"-->
+<!--    android:text="Open Camera"-->
+<!--    android:layout_marginTop="10dp"/>-->
 </LinearLayout>
