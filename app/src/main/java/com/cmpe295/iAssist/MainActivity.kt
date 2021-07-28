@@ -4,12 +4,10 @@ import android.Manifest.permission
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Handler
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import kotlinx.android.synthetic.main.activity_main.*
@@ -17,8 +15,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var speechRecognizer: SpeechRecognizer? = null
     private var textToSpeech: TextToSpeech? = null
-    // private var textView: TextView? = null
-    //private var intent: Intent? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -31,7 +27,6 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             ),
             PackageManager.PERMISSION_GRANTED
         )
-        //textView = findViewById(R.id.textView)
         textToSpeech = TextToSpeech(this,this)
         intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent!!.putExtra(
@@ -83,56 +78,14 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             override fun onPartialResults(partialResults: Bundle) {}
             override fun onEvent(eventType: Int, params: Bundle) {}
         })
-        //startButton();
-
-//       textToSpeech!!.speak(
-//           "Please tell me, how can I help you?",
-//           TextToSpeech.QUEUE_FLUSH,
-//           null,
-//           null
-//       )
-//       try {
-//           Thread.sleep(3000)
-//       } catch (e: InterruptedException) {
-//           e.printStackTrace()
-//       }
-//       speechRecognizer!!.startListening(intent)
     }
-
-//    private fun startButton() {
-//        textToSpeech?.speak(
-//            "Please tell me, how can I help you?",
-//            TextToSpeech.QUEUE_FLUSH,
-//            null,
-//            null
-//        )
-//        try {
-//            Thread.sleep(3000)
-//        } catch (e: InterruptedException) {
-//            e.printStackTrace()
-//        }
-//        speechRecognizer!!.startListening(intent)
-//    }
-
-    private fun createMethod() {
-        Toast.makeText(applicationContext, "Create called", Toast.LENGTH_SHORT).show()
-    }
-
     override fun onInit(status: Int) {
-        Toast.makeText(applicationContext, "oninit", Toast.LENGTH_SHORT).show()
         textToSpeech!!.speak(
             "Do you need visual Assistance?",
             TextToSpeech.QUEUE_FLUSH,
             null,
             null
         )
-
-//        @Suppress("DEPRECATION")
-//        Handler().postDelayed(
-//            {
-//                speechRecognizer!!.startListening(intent)
-//            },
-//            10000)
        try {
            Thread.sleep(8000)
            speechRecognizer!!.startListening(intent)
