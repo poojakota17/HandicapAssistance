@@ -28,16 +28,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.util.*
 
 class VisualAssistanceActivity : AppCompatActivity(){
 
+    lateinit var mTextToSpeech:TextToSpeech
     lateinit var bitmap: Bitmap
     var string: String = "{}"
     lateinit var res : AnalysisResult
     lateinit var visionServiceClient : VisionServiceClient
     companion object {
-        val API_KEY = "*******"
-        val API_LINK = "*******"
+        val API_KEY = "******"
+        val API_LINK = "******"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +66,7 @@ class VisualAssistanceActivity : AppCompatActivity(){
                 ), 100
             )
         }
-        
+
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         startActivityForResult(intent, 100)
 
@@ -72,6 +74,13 @@ class VisualAssistanceActivity : AppCompatActivity(){
 //            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 //            startActivityForResult(intent, 100)
 //        }
+
+        mTextToSpeech = TextToSpeech(applicationContext, TextToSpeech.OnInitListener { status ->
+            if (status != TextToSpeech.ERROR) {
+                //if there is no error then set language
+                mTextToSpeech.language = Locale.US
+            }
+        })
 
     }
 
@@ -121,6 +130,11 @@ class VisualAssistanceActivity : AppCompatActivity(){
                     textresult.text= result_text.toString()
                 }
 
+            }
+            //get text
+            val toSpeak = textresult.text.toString()
+            if (toSpeak != null) {
+                mTextToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH,null)
             }
         }
     }
