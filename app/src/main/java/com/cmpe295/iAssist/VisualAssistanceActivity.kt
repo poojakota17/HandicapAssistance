@@ -9,10 +9,9 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.speech.tts.TextToSpeech
 import android.util.Log
-import android.view.View
+import android.view.KeyEvent
 import android.view.WindowInsets
 import android.view.WindowManager
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -30,6 +29,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.util.*
 
+
 class VisualAssistanceActivity : AppCompatActivity(){
 
     lateinit var mTextToSpeech:TextToSpeech
@@ -38,8 +38,8 @@ class VisualAssistanceActivity : AppCompatActivity(){
     lateinit var res : AnalysisResult
     lateinit var visionServiceClient : VisionServiceClient
     companion object {
-        val API_KEY = "******"
-        val API_LINK = "******"
+        val API_KEY = "*********"
+        val API_LINK = "************"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,18 +90,25 @@ class VisualAssistanceActivity : AppCompatActivity(){
             val captureImage = data!!.extras!!["data"] as Bitmap?
             image_view!!.setImageBitmap(captureImage)
             if (captureImage != null) {
-                bitmap=captureImage
+                bitmap = captureImage
             }
+
+        }
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            event.startTracking()
+            Log.d("Test", "Short")
             visionServiceClient = VisionServiceRestClient(API_KEY, API_LINK)
             val uiScope = CoroutineScope(Dispatchers.Main)
-            //set button onclicklistener
-            //val btn: Button = findViewById(R.id.Chooseimage)
-            detectscene.setOnClickListener(){
-                uiScope.launch {
-                    processimage()
-                }
+            //TODO
+            uiScope.launch {
+                processimage()
             }
+            return true
         }
+        return super.onKeyUp(keyCode, event)
     }
 
     private suspend fun processimage() {
@@ -127,16 +134,23 @@ class VisualAssistanceActivity : AppCompatActivity(){
                 val result_text = StringBuilder()
                 for(caption in result.description.captions!!){
                     result_text.append(caption.text)
-                    textresult.text= result_text.toString()
+                    Log.e("description",result_text.toString())
+                    val toSpeak = result_text.toString()
+                    if (toSpeak != null) {
+                        Log.e("speech",toSpeak.toString())
+                        mTextToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH,null)
+                    }
                 }
 
             }
-            //get text
-            val toSpeak = textresult.text.toString()
-            if (toSpeak != null) {
-                mTextToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH,null)
-            }
+//            //get text
+//            val toSpeak = textresult.text.toString()
+//            if (toSpeak != null) {
+//                mTextToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH,null)
+//            }
         }
     }
+
+
 
 }
