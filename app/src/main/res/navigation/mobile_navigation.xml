@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_visual">
+
+    <fragment
+        android:id="@+id/navigation_visual"
+        android:name="com.cmpe295.iAssist.ui.fragments.VisualAssistanceFragment"
+        android:label="Visual Assistance"
+        tools:layout="@layout/fragment_visual" />
+
+    <fragment
+        android:id="@+id/navigation_hearing"
+        android:name="com.cmpe295.iAssist.ui.fragments.HearingAssistanceFragment"
+        android:label="Hearing Assistance"
+        tools:layout="@layout/fragment_hearing" />
+
+    <fragment
+        android:id="@+id/navigation_talking"
+        android:name="com.cmpe295.iAssist.ui.fragments.TalkingAssistanceFragment"
+        android:label="Talking Assistance"
+        tools:layout="@layout/fragment_talking" />
+</navigation>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_visual"
+        android:icon="@drawable/ic_vector_visual"
+        android:title="Visual" />
+
+    <item
+        android:id="@+id/navigation_hearing"
+        android:icon="@drawable/ic_vector_hearing"
+        android:title="Hearing" />
+
+    <item
+        android:id="@+id/navigation_talking"
+        android:icon="@drawable/ic_vector_talking"
+        android:title="Talking" />
+
+</menu>
