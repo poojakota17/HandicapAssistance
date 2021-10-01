@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
@@ -16,6 +17,7 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.cmpe295.iAssist.Constants
 import com.cmpe295.iAssist.R
@@ -114,6 +116,7 @@ class VisualAssistanceFragment : Fragment() {
                     /**
                      * Convert Image Proxy to Bitmap
                      */
+                    Log.i("ImageFormat", "${image.format}")
                     fun toBitmap(image: ImageProxy): Bitmap? {
                         val byteBuffer = image.planes[0].buffer
                         byteBuffer.rewind()
@@ -168,7 +171,6 @@ class VisualAssistanceFragment : Fragment() {
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
-
     private suspend fun processimage() {
         withContext(Dispatchers.Default) {
             val outputStream = ByteArrayOutputStream()
@@ -213,4 +215,5 @@ class VisualAssistanceFragment : Fragment() {
 //            }
         }
     }
+
 }
