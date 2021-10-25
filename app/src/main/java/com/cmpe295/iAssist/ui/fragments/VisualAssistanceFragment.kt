@@ -31,10 +31,7 @@ import edmt.dev.edmtdevcognitivevision.Contract.AnalysisResult
 import edmt.dev.edmtdevcognitivevision.Rest.VisionServiceException
 import edmt.dev.edmtdevcognitivevision.VisionServiceClient
 import edmt.dev.edmtdevcognitivevision.VisionServiceRestClient
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.io.*
@@ -48,8 +45,9 @@ class VisualAssistanceFragment : Fragment() {
     lateinit var res : AnalysisResult
     lateinit var visionServiceClient : VisionServiceClient
     companion object {
-        val API_KEY="*****"
-        val API_LINK="****"
+
+        val API_KEY="************"
+        val API_LINK="************"
         val ORIENTATIONS = SparseIntArray()
         init {
             ORIENTATIONS.append(Surface.ROTATION_0, 90)
@@ -214,7 +212,43 @@ class VisualAssistanceFragment : Fragment() {
                             val uiScope = CoroutineScope(Dispatchers.Main)
                             //TODO
                             uiScope.launch {
-                                processimage()
+                                withContext(Dispatchers.Default) {
+                                    val outputStream = ByteArrayOutputStream()
+                                    // Thread.sleep(3000)
+                                    bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                                    val inputStream = ByteArrayInputStream(outputStream.toByteArray())
+                                    try {
+                                        val features : Array<String> = arrayOf("Description")
+                                        val details = arrayOf<String>()
+                                        res = visionServiceClient.analyzeImage(inputStream, features,details)
+                                        string = Gson().toJson(res)
+                                        Log.d("result", string);
+
+                                    } catch (e: VisionServiceException){
+                                        Log.e("visionexception",e.message.toString())
+                                    }
+
+                                    withContext(Dispatchers.Main) {
+                                        val result : AnalysisResult = Gson().fromJson<AnalysisResult>(string,AnalysisResult::class.java)
+
+                                        val result_text = StringBuilder()
+                                        for(caption in result.description.captions!!){
+                                            result_text.append(caption.text)
+                                            Log.i("Description",result_text.toString())
+                                            val toSpeak = "$result_text at $calculated_distance meters"
+                                            if (toSpeak != null) {
+                                                Log.i("Speech",toSpeak.toString())
+                                                if(!::mTextToSpeech.isInitialized){
+                                                    mTextToSpeech = TextToSpeech(requireContext(), TextToSpeech.OnInitListener {
+
+                                                    })
+                                                }
+                                                mTextToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH,null)
+                                            }
+                                        }
+
+                                    }
+                                }
                             }
 //                            save(bytes)
                         } catch (e: FileNotFoundException) {
@@ -434,43 +468,46 @@ class VisualAssistanceFragment : Fragment() {
     }
 
 
-    private suspend fun processimage() {
-        withContext(Dispatchers.Default) {
-            val outputStream = ByteArrayOutputStream()
-            bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-            val inputStream = ByteArrayInputStream(outputStream.toByteArray())
-            try {
-                val features : Array<String> = arrayOf("Description")
-                val details = arrayOf<String>()
-                res = visionServiceClient.analyzeImage(inputStream, features,details)
-                string = Gson().toJson(res)
-                Log.d("result", string);
+//    private suspend fun processimage() {
+//        withContext(Dispatchers.Default) {
+//            val outputStream = ByteArrayOutputStream()
+//           // Thread.sleep(3000)
+//            bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+//            val inputStream = ByteArrayInputStream(outputStream.toByteArray())
+//            try {
+//                val features : Array<String> = arrayOf("Description")
+//                val details = arrayOf<String>()
+//                res = visionServiceClient.analyzeImage(inputStream, features,details)
+//                string = Gson().toJson(res)
+//                Log.d("result", string);
+//
+//            } catch (e: VisionServiceException){
+//                Log.e("visionexception",e.message.toString())
+//            }
+//
+//           withContext(Dispatchers.Main) {
+//               val result : AnalysisResult = Gson().fromJson<AnalysisResult>(string,AnalysisResult::class.java)
+//
+//                val result_text = StringBuilder()
+//                for(caption in result.description.captions!!){
+//                    result_text.append(caption.text)
+//                    Log.i("Description",result_text.toString())
+//                    val toSpeak = "$result_text at $calculated_distance meters"
+//                    if (toSpeak != null) {
+//                        Log.i("Speech",toSpeak.toString())
+//                        if(!::mTextToSpeech.isInitialized){
+//                            mTextToSpeech = TextToSpeech(requireContext(), TextToSpeech.OnInitListener {
+//
+//                            })
+//                        }
+//                        mTextToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH,null)
+//                    }
+//                }
+//
+//           }
+//        }
+//
+//    }
 
-            } catch (e: VisionServiceException){
-                Log.e("visionexception",e.message.toString())
-            }
-
-            withContext(Dispatchers.Main) {
-                val result : AnalysisResult = Gson().fromJson<AnalysisResult>(string,AnalysisResult::class.java)
-
-                val result_text = StringBuilder()
-                for(caption in result.description.captions!!){
-                    result_text.append(caption.text)
-                    Log.i("Description",result_text.toString())
-                    val toSpeak = "$result_text at $calculated_distance meters"
-                    if (toSpeak != null) {
-                        Log.i("Speech",toSpeak.toString())
-                        if(!::mTextToSpeech.isInitialized){
-                            mTextToSpeech = TextToSpeech(requireContext(), TextToSpeech.OnInitListener {
-
-                            })
-                        }
-                        mTextToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH,null)
-                    }
-                }
-
-            }
-        }
-    }
 
 }
