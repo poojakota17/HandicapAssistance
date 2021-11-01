@@ -49,7 +49,7 @@ class VisualAssistanceFragment : Fragment() {
     lateinit var visionServiceClient : VisionServiceClient
     companion object {
         val API_KEY="*****"
-        val API_LINK="****"
+        val API_LINK="******"
         val ORIENTATIONS = SparseIntArray()
         init {
             ORIENTATIONS.append(Surface.ROTATION_0, 90)
@@ -437,7 +437,7 @@ class VisualAssistanceFragment : Fragment() {
     private suspend fun processimage() {
         withContext(Dispatchers.Default) {
             val outputStream = ByteArrayOutputStream()
-            bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            bitmap?.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
             val inputStream = ByteArrayInputStream(outputStream.toByteArray())
             try {
                 val features : Array<String> = arrayOf("Description")
@@ -457,7 +457,8 @@ class VisualAssistanceFragment : Fragment() {
                 for(caption in result.description.captions!!){
                     result_text.append(caption.text)
                     Log.i("Description",result_text.toString())
-                    val toSpeak = "$result_text at $calculated_distance meters"
+                    var roundup_distance: String? = "%.2f".format(calculated_distance)
+                    val toSpeak = "$result_text at $roundup_distance meters"
                     if (toSpeak != null) {
                         Log.i("Speech",toSpeak.toString())
                         if(!::mTextToSpeech.isInitialized){
