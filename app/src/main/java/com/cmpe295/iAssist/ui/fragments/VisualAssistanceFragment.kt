@@ -27,6 +27,9 @@ import androidx.fragment.app.Fragment
 import com.cmpe295.iAssist.DashboardActivity
 import com.cmpe295.iAssist.databinding.FragmentVisualBinding
 import com.google.gson.Gson
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import edmt.dev.edmtdevcognitivevision.Contract.AnalysisResult
 import edmt.dev.edmtdevcognitivevision.Rest.VisionServiceException
 import edmt.dev.edmtdevcognitivevision.VisionServiceClient
@@ -46,8 +49,9 @@ class VisualAssistanceFragment : Fragment() {
     lateinit var visionServiceClient : VisionServiceClient
     companion object {
 
-        val API_KEY="************"
-        val API_LINK="************"
+        val API_KEY="*******"
+        val API_LINK="***********"
+
         val ORIENTATIONS = SparseIntArray()
         init {
             ORIENTATIONS.append(Surface.ROTATION_0, 90)
@@ -86,9 +90,14 @@ class VisualAssistanceFragment : Fragment() {
     public fun onKeyEvent(event : DashboardActivity.Event) {
         // Called by eventBus when an event occurs
         if(event.keyCode == 25) {
-            takePicture()
+            takePicture1()
+        }
+        if(event.keyCode==24){
+            takepicture2()
         }
     }
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -157,7 +166,7 @@ class VisualAssistanceFragment : Fragment() {
         }
     }
 
-    protected fun takePicture() {
+    protected fun takePicture1() {
         if (null == cameraDevice) {
             Log.e(TAG, "cameraDevice is null")
             return
@@ -421,6 +430,162 @@ class VisualAssistanceFragment : Fragment() {
             imageReader!!.close()
             imageReader = null
         }
+    }
+    private fun takepicture2() {
+
+            if (null == cameraDevice) {
+                Log.e(TAG, "cameraDevice is null")
+                return
+            }
+            val manager = getSystemService(requireContext(), CameraManager::class.java)
+            try {
+                val characteristics = manager?.getCameraCharacteristics(
+                    cameraDevice!!.id
+                )
+                var jpegSizes: Array<Size>? = null
+                if (characteristics != null) {
+                    jpegSizes =
+                        characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)!!
+                            .getOutputSizes(ImageFormat.JPEG)
+                    Log.e("CameraCharacteristics","${CameraCharacteristics.LENS_INFO_FOCUS_DISTANCE_CALIBRATION}")
+                }
+                var width = 640
+                var height = 480
+                if (jpegSizes != null && 0 < jpegSizes.size) {
+                    width = jpegSizes[0].width
+                    height = jpegSizes[0].height
+                }
+                val reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1)
+                val outputSurfaces: MutableList<Surface> = ArrayList(2)
+                outputSurfaces.add(reader.surface)
+                outputSurfaces.add(Surface(textureView!!.surfaceTexture))
+                val captureBuilder =
+                    cameraDevice!!.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE)
+                captureBuilder.addTarget(reader.surface)
+                captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO)
+                // Orientation
+                val display = (getSystemService(requireContext(),WindowManager::class.java))
+                    ?.getDefaultDisplay()
+                val rotation: Int = display?.getRotation() ?: 0;
+                captureBuilder.set(
+                    CaptureRequest.JPEG_ORIENTATION,
+                    ORIENTATIONS.get(rotation)
+                )
+                val file = File(Environment.getExternalStorageDirectory().toString() + "/pic.jpg")
+                val readerListener: ImageReader.OnImageAvailableListener =
+                    object : ImageReader.OnImageAvailableListener {
+                        override fun onImageAvailable(reader: ImageReader) {
+                            var image: Image? = null
+                            try {
+                                image = reader.acquireLatestImage()
+                                val buffer = image.planes[0].buffer
+                                val bytes = ByteArray(buffer.capacity())
+                                buffer[bytes]
+                                val clonedBytes = bytes.clone()
+                                bitmap = BitmapFactory.decodeByteArray(clonedBytes, 0, clonedBytes.size)
+                                val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+
+                                val image: InputImage
+                                InputImage.fromBitmap(bitmap, 0).also { image = it }
+                                val result = recognizer.process(image)
+                                    .addOnSuccessListener { visionText ->
+                                        // Task completed successfully
+                                        // ...
+                                        Log.i("textrecogn",visionText.text)
+                                        if (visionText.text!= null) {
+
+                                        if(!::mTextToSpeech.isInitialized){
+                                            mTextToSpeech = TextToSpeech(requireContext(), TextToSpeech.OnInitListener {
+
+                                            })
+                                        }
+                                        mTextToSpeech.speak(visionText.text, TextToSpeech.QUEUE_FLUSH,null)
+                                    }
+                                    }
+                                    .addOnFailureListener { e ->
+                                        // Task failed with an exception
+                                        // ...
+                                        Log.i("ml firebaseeror",e.toString())
+                                    }
+
+
+                            } catch (e: FileNotFoundException) {
+                                e.printStackTrace()
+                            } catch (e: IOException) {
+                                e.printStackTrace()
+                            } finally {
+                                image?.close()
+                            }
+                        }
+
+                        @Throws(IOException::class)
+                        private fun save(bytes: ByteArray) {
+                            var output: OutputStream? = null
+                            try {
+                                output = FileOutputStream(file)
+                                output.write(bytes)
+                            } finally {
+                                output?.close()
+                            }
+                        }
+                    }
+                reader.setOnImageAvailableListener(readerListener, mBackgroundHandler)
+                val captureListener: CaptureCallback = object : CaptureCallback() {
+                    override fun onCaptureCompleted(
+                        session: CameraCaptureSession,
+                        request: CaptureRequest,
+                        result: TotalCaptureResult
+                    ) {
+                        super.onCaptureCompleted(session, request, result)
+                        Log.e(
+                            TAG,
+                            String.format(
+                                "captureCallbackListener %s-%f",
+                                result.get(CaptureResult.LENS_STATE).toString(),
+                                result.get(CaptureResult.LENS_FOCUS_DISTANCE)
+                            )
+                        )
+                        Log.e(
+                            TAG,
+                            String.format(
+                                "AF mode %s-%s",
+                                result.get(CaptureResult.CONTROL_AF_MODE).toString(),
+                                result.get(CaptureResult.CONTROL_AF_STATE).toString()
+                            )
+                        )
+
+                        calculated_distance = 1 / result.get(CaptureResult.LENS_FOCUS_DISTANCE)!!
+//                    Toast.makeText(
+//                        requireContext(),
+//                        "Distance: $calculated_distance meters",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+                        createCameraPreview()
+                    }
+                }
+                cameraDevice!!.createCaptureSession(
+                    outputSurfaces,
+                    object : CameraCaptureSession.StateCallback() {
+                        override fun onConfigured(session: CameraCaptureSession) {
+                            try {
+                                session.capture(
+                                    captureBuilder.build(),
+                                    captureListener,
+                                    mBackgroundHandler
+                                )
+                            } catch (e: CameraAccessException) {
+                                e.printStackTrace()
+                            }
+                        }
+
+                        override fun onConfigureFailed(session: CameraCaptureSession) {}
+                    },
+                    mBackgroundHandler
+                )
+            } catch (e: CameraAccessException) {
+                e.printStackTrace()
+            }
+
     }
 
 
