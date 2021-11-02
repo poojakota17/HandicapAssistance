@@ -50,7 +50,7 @@ class VisualAssistanceFragment : Fragment() {
     companion object {
 
         val API_KEY="*******"
-        val API_LINK="***********"
+        val API_LINK="***********:"
 
         val ORIENTATIONS = SparseIntArray()
         init {
