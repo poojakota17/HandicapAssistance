@@ -49,8 +49,8 @@ class VisualAssistanceFragment : Fragment() {
     lateinit var visionServiceClient : VisionServiceClient
     companion object {
 
-        val API_KEY="*******"
-        val API_LINK="***********:"
+        val API_KEY="9c3a49d3287d4e71bb099a0ac22dd6a5"
+        val API_LINK="https://scenedetecter.cognitiveservices.azure.com//vision/v3.1"
 
         val ORIENTATIONS = SparseIntArray()
         init {
@@ -224,7 +224,7 @@ class VisualAssistanceFragment : Fragment() {
                                 withContext(Dispatchers.Default) {
                                     val outputStream = ByteArrayOutputStream()
                                     // Thread.sleep(3000)
-                                    bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                                    bitmap?.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
                                     val inputStream = ByteArrayInputStream(outputStream.toByteArray())
                                     try {
                                         val features : Array<String> = arrayOf("Description")
