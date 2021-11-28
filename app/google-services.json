@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "441288971796",
+    "project_id": "iassist-f90ce",
+    "storage_bucket": "iassist-f90ce.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:441288971796:android:3b7fc83da422bf37087901",
+        "android_client_info": {
+          "package_name": "com.cmpe295.iAssist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "441288971796-05l2esbttgc01kvp15pve3blojri6rlh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtk_k_HBBL8tfUGtp_2uWIlrnIxKgeuzI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "441288971796-05l2esbttgc01kvp15pve3blojri6rlh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
