@@ -49,8 +49,9 @@ class VisualAssistanceFragment : Fragment() {
     lateinit var visionServiceClient : VisionServiceClient
     companion object {
 
-        val API_KEY="9c3a49d3287d4e71bb099a0ac22dd6a5"
-        val API_LINK="https://scenedetecter.cognitiveservices.azure.com//vision/v3.1"
+
+        val API_KEY="*****"
+        val API_LINK="******"
 
         val ORIENTATIONS = SparseIntArray()
         init {
@@ -244,7 +245,9 @@ class VisualAssistanceFragment : Fragment() {
                                         for(caption in result.description.captions!!){
                                             result_text.append(caption.text)
                                             Log.i("Description",result_text.toString())
-                                            val toSpeak = "$result_text at $calculated_distance meters"
+                                            var roundup_distance: String? = "%.2f".format(calculated_distance)
+                                            val toSpeak = "$result_text at $roundup_distance meters"
+                                           //val toSpeak = "$result_text at $calculated_distance meters"
                                             if (toSpeak != null) {
                                                 Log.i("Speech",toSpeak.toString())
                                                 if(!::mTextToSpeech.isInitialized){
@@ -633,6 +636,7 @@ class VisualAssistanceFragment : Fragment() {
     }
 
 
+<<
 //    private suspend fun processimage() {
 //        withContext(Dispatchers.Default) {
 //            val outputStream = ByteArrayOutputStream()
@@ -657,6 +661,8 @@ class VisualAssistanceFragment : Fragment() {
 //                for(caption in result.description.captions!!){
 //                    result_text.append(caption.text)
 //                    Log.i("Description",result_text.toString())
+//                     var roundup_distance: String? = "%.2f".format(calculated_distance)
+//                    val toSpeak = "$result_text at $roundup_distance meters"
 //                    val toSpeak = "$result_text at $calculated_distance meters"
 //                    if (toSpeak != null) {
 //                        Log.i("Speech",toSpeak.toString())
@@ -673,6 +679,8 @@ class VisualAssistanceFragment : Fragment() {
 //        }
 //
 //    }
+
+
 
 
 }
